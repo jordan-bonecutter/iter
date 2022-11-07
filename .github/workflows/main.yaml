@@ -13,9 +13,6 @@ jobs:
 
       - name: Setup Go
         uses: actions/setup-go@v2
-      
-      - name: Format Go Code
-        run: gofmt -s -w .
 
       - name: Run go vet
         run: go vet . github.com/jordan-bonecutter/iter
