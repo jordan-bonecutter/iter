@@ -28,7 +28,7 @@ func Map[T1, T2 any](iter Iter[T1], f func(t1 T1) (t2 T2, stop bool)) (out Iter[
 
 // map implements a mapping iterator
 type mapIt[T1, T2 any] struct {
-	in Iter[T1]
+	in          Iter[T1]
 	transformer func(t1 T1) (t2 T2, stop bool)
 }
 
@@ -39,7 +39,7 @@ func (m mapIt[T1, T2]) ForEach(f func(T2) (stop bool)) {
 		if stop {
 			return true
 		}
-		
+
 		return f(t2)
 	})
 }
@@ -56,7 +56,7 @@ func (c mapCounter[T1, T2]) Count() int {
 }
 
 // Filter an Iter[T] with a filtering function.
-func Filter[T any](iter Iter[T], f func(t T) bool) (Iter[T]) {
+func Filter[T any](iter Iter[T], f func(t T) bool) Iter[T] {
 	if _, ok := iter.(Counter); ok {
 		return filterCounter[T]{
 			filter: filter[T]{
@@ -72,16 +72,16 @@ func Filter[T any](iter Iter[T], f func(t T) bool) (Iter[T]) {
 
 // filter implements the filter operation on Iter[T].
 type filter[T any] struct {
-	in Iter[T]
+	in     Iter[T]
 	filter func(T) (include bool)
 }
 
-func (filt filter[T]) ForEach(f func (t T) (stop bool)) {
+func (filt filter[T]) ForEach(f func(t T) (stop bool)) {
 	filt.in.ForEach(func(t T) (stop bool) {
 		if filt.filter(t) {
 			return f(t)
 		}
-		
+
 		return false
 	})
 }
@@ -95,7 +95,7 @@ func (f filterCounter[T]) Count() int {
 }
 
 // Take at most count items from the given iterable.
-func Take[T any](iter Iter[T], count int) (Iter[T]) {
+func Take[T any](iter Iter[T], count int) Iter[T] {
 	return take[T]{
 		it: iter, count: count,
 	}
@@ -103,7 +103,7 @@ func Take[T any](iter Iter[T], count int) (Iter[T]) {
 
 // take implements the take operator on an iterator.
 type take[T any] struct {
-	it Iter[T]
+	it    Iter[T]
 	count int
 }
 
@@ -114,7 +114,7 @@ func (taker take[T]) ForEach(f func(t T) (stop bool)) {
 			return true
 		}
 		count++
-		
+
 		return f(t)
 	})
 }
@@ -135,12 +135,12 @@ func Collect[T any](iter Iter[T]) (collection []T) {
 	if counter, ok := iter.(Counter); ok {
 		collection = make([]T, 0, counter.Count())
 	}
-	
+
 	iter.ForEach(func(t T) (stop bool) {
 		collection = append(collection, t)
 		return false
 	})
-	
+
 	return collection
 }
 
@@ -149,12 +149,12 @@ func MapCollect[T, V any, K comparable](iter Iter[T], kvFunc func(t T) (k K, v V
 	if counter, ok := iter.(Counter); ok {
 		collection = make(map[K]V, counter.Count())
 	}
-	
-	iter.ForEach(func (t T) (stop bool) {
+
+	iter.ForEach(func(t T) (stop bool) {
 		k, v := kvFunc(t)
 		collection[k] = v
 		return false
- 	})
-	
+	})
+
 	return collection
 }
