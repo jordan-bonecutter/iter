@@ -15,12 +15,12 @@ func TestMap(t *testing.T) {
 	}), 10), func(el KeyValue[string, int]) (k string, v int) {
 		return el.K, el.V
 	})
-	
+
 	if len(m2) != 4 {
 		t.Errorf("Expected final collected map to have length 4")
 	}
-	
-	expected := map[string]int {
+
+	expected := map[string]int{
 		"world": 2, "name": 1, "is": 6, "jordan": 7,
 	}
 	for k2, v2 := range m2 {
@@ -32,7 +32,7 @@ func TestMap(t *testing.T) {
 			delete(expected, k2)
 		}
 	}
-	
+
 	for k, v := range expected {
 		t.Errorf("Missing key value pair: (%v, %v)", k, v)
 	}

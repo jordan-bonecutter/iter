@@ -16,4 +16,3 @@ type KeyValue[K comparable, V any] struct {
 	K K
 	V V
 }
-
