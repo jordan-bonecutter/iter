@@ -16,3 +16,8 @@ func (r Result[T]) Unwrap() T {
 	
 	return r.T
 }
+
+type Responder[Request, ResponseMedium any] struct {
+	Request Request
+	ResponseMedium ResponseMedium
+}
